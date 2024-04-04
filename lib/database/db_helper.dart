@@ -26,14 +26,30 @@ class DatabaseHelper {
             await db.execute('''CREATE TABLE Stock (code INTEGER PRIMARY KEY, 
                 name TEXT, type TEXT, quantity INTEGER, unit TEXT,
                  QR TEXT)''');
+            await db.execute('''CREATE TABLE Dismissed (
+             id INTEGER PRIMARY KEY,
+              quantity INTEGER,
+              codeId INTEGER ,       
+              FOREIGN KEY (codeId) REFERENCES Stock (code)
+          )''');
+            await db.execute('''CREATE TABLE Incoming (
+    id INTEGER PRIMARY KEY,
+    quantity INTEGER,        
+    codeId INTEGER ,       
+    FOREIGN KEY (codeId) REFERENCES Stock (code)
+ 
+    )''');
             print("Database created!!!");
           } catch (error) {
             print("There's an error while creation");
             print(error.toString());
           }
         },
-        onOpen: (db) {
+        onOpen: (db) async {
           print("Database opened !!!");
+        },
+        onConfigure: (db) {
+          db.execute('PRAGMA foreign_keys = ON');
         },
       );
     }
@@ -67,12 +83,22 @@ class DatabaseHelper {
   }
 
   //get data
-  static Future<List<Map<String,dynamic>>> getAllQueries() async {
+  static Future<List<Map<String, dynamic>>> getAllQueries() async {
     List<Map<String, dynamic>> list =
         await _db!.rawQuery('SELECT * FROM Stock');
     return list;
   }
 
+  static Future<List<Map<String, dynamic>>> getAllQueriesDependOnName({required String searchQuery}) async {
+    print(searchQuery);
+    List<Map<String, dynamic>> list =
+    searchQuery == "" ? await _db!.rawQuery('SELECT * FROM Stock') : await _db!.rawQuery('''
+    SELECT * 
+    FROM Stock
+    WHERE name LIKE '%$searchQuery%'
+  ''');
+    return list;
+  }
   //get one query
   static Future<void> getOneQuery({required int codeId}) async {
     List<Map<String, dynamic>> list =

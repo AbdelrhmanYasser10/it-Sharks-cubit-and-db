@@ -9,7 +9,6 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
 
   await DatabaseHelper.initializeDatabase();
-
   runApp(const MyApp());
 }
 

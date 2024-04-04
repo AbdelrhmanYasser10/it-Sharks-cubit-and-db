@@ -29,4 +29,19 @@ void getAllData() async{
   }
 }
 
+void getAllProductNames({required String query}) async{
+  emit(GetNamesLoading());
+  try {
+    List<Map<String, dynamic>> map = await DatabaseHelper
+        .getAllQueriesDependOnName(searchQuery: query);
+    List<Stock> data = [];
+    for (var element in map) {
+      data.add(Stock.fromMap(element));
+    }
+    emit(GetNamesSuccessfully(data: data));
+  }catch(error){
+    emit(GetNamesSuccessError(message: error.toString()));
+  }
+}
+
 }
