@@ -190,7 +190,7 @@ class HomeScreen extends StatelessWidget {
         }
         // Impossible condition
         else {
-          return const SizedBox.shrink();
+          return const Scaffold(body:  SizedBox.shrink());
         }
       },
     );

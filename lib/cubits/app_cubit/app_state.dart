@@ -28,3 +28,11 @@ class GetNamesSuccessError extends AppState {
   final String message;
   GetNamesSuccessError({required this.message});
 }
+
+class InsertLoading extends AppState{}
+
+class InsertedSuccessfully extends AppState{
+
+}
+
+class InsertedError extends AppState {}

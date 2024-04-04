@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled6/cubits/app_cubit/app_cubit.dart';
+import 'package:untitled6/cubits/incoming_cubit/incoming_cubit.dart';
 import 'package:untitled6/database/db_helper.dart';
 import 'package:untitled6/screens/home_screen.dart';
 
@@ -17,8 +18,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AppCubit()..getAllData(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_)=>AppCubit()..getAllData()),
+        BlocProvider(create: (_)=>IncomingCubit()),
+      ],
       child: MaterialApp(
         title: 'Material App',
         debugShowCheckedModeBanner: false,

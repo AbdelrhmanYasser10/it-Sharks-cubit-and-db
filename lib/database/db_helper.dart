@@ -35,7 +35,7 @@ class DatabaseHelper {
             await db.execute('''CREATE TABLE Incoming (
     id INTEGER PRIMARY KEY,
     quantity INTEGER,        
-    codeId INTEGER ,       
+    codeId INTEGER,       
     FOREIGN KEY (codeId) REFERENCES Stock (code)
  
     )''');
@@ -81,11 +81,32 @@ class DatabaseHelper {
       print("Database not initialized yet");
     }
   }
+  static Future<void> insertIntoIncoming({required int codeId,required int quantity}) async {
+    if (_db != null) {
+      try {
+        await _db!.rawInsert(
+            "INSERT INTO Incoming (id,codeId,quantity) VALUES(?,?,?)",
+            [
+              null,
+              codeId,
+              quantity,
+            ]);
+        print("Inserted Successfully");
+      } catch (error) {
+        print("Error while insert data");
+        print(error.toString());
+      }
+    } else {
+      print("Database not initialized yet");
+    }
+  }
+
+
 
   //get data
-  static Future<List<Map<String, dynamic>>> getAllQueries() async {
+  static Future<List<Map<String, dynamic>>> getAllQueries({required String tableName}) async {
     List<Map<String, dynamic>> list =
-        await _db!.rawQuery('SELECT * FROM Stock');
+        await _db!.rawQuery('SELECT * FROM $tableName');
     return list;
   }
 
@@ -100,10 +121,11 @@ class DatabaseHelper {
     return list;
   }
   //get one query
-  static Future<void> getOneQuery({required int codeId}) async {
+  static Future<Map<String,dynamic>> getOneQuery({required int codeId}) async {
     List<Map<String, dynamic>> list =
         await _db!.rawQuery('SELECT * FROM Stock WHERE code = ?', [codeId]);
     print(list);
+    return list.first;
   }
 
   // update - edit
@@ -136,4 +158,20 @@ class DatabaseHelper {
       print("Error");
     }
   }
+
+  static Future<void> updateAndInsertNewProductValue({required int codeId,required int quantity}) async{
+    // Update
+    Map<String ,dynamic> query = await getOneQuery(codeId: codeId);
+    print(query);
+    Stock stockVal = Stock.fromMap(query);
+
+    print(stockVal);
+    stockVal.quantity = stockVal.quantity! + quantity;
+    print(stockVal.quantity);
+    await updateData(stock: stockVal);
+
+    //Insert in Incoming table
+    await insertIntoIncoming(codeId: codeId , quantity: quantity);
+  }
+
 }

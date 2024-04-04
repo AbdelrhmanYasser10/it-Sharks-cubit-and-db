@@ -18,7 +18,9 @@ static AppCubit get(context)=> BlocProvider.of(context);
 void getAllData() async{
   emit(GetDataLoading());
   try {
-    List<Map<String, dynamic>> list = await DatabaseHelper.getAllQueries();
+    List<Map<String, dynamic>> list = await DatabaseHelper.getAllQueries(
+      tableName: "Stock"
+    );
     List<Stock> listOfData = [];
     for (var element in list) {
       listOfData.add(Stock.fromMap(element));
@@ -41,6 +43,16 @@ void getAllProductNames({required String query}) async{
     emit(GetNamesSuccessfully(data: data));
   }catch(error){
     emit(GetNamesSuccessError(message: error.toString()));
+  }
+}
+
+void insertNewProductQuantity({required int codeId,required int quantity}) async{
+  emit(InsertLoading());
+  try {
+    await DatabaseHelper.updateAndInsertNewProductValue(codeId: codeId, quantity: quantity);
+    emit(InsertedSuccessfully());
+  }catch(error){
+    emit(InsertedError());
   }
 }
 
