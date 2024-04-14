@@ -4,6 +4,7 @@ import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 import 'package:untitled6/cubits/app_cubit/app_cubit.dart';
 import 'package:untitled6/screens/add_new_incoming_product.dart';
 import 'package:untitled6/screens/delete_screen.dart';
+import 'package:untitled6/screens/dissmissed_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -160,7 +161,14 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const DismissedScreen(),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.amber,
                       ),

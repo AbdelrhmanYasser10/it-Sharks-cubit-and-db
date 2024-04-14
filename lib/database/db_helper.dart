@@ -101,7 +101,25 @@ class DatabaseHelper {
     }
   }
 
-
+  static Future<void> insertIntoDismissed({required int codeId,required int quantity}) async {
+    if (_db != null) {
+      try {
+        await _db!.rawInsert(
+            "INSERT INTO Dismissed (id,codeId,quantity) VALUES(?,?,?)",
+            [
+              null,
+              codeId,
+              quantity,
+            ]);
+        print("Inserted Successfully");
+      } catch (error) {
+        print("Error while insert data");
+        print(error.toString());
+      }
+    } else {
+      print("Database not initialized yet");
+    }
+  }
 
   //get data
   static Future<List<Map<String, dynamic>>> getAllQueries({required String tableName}) async {
@@ -124,8 +142,12 @@ class DatabaseHelper {
   static Future<Map<String,dynamic>> getOneQuery({required int codeId}) async {
     List<Map<String, dynamic>> list =
         await _db!.rawQuery('SELECT * FROM Stock WHERE code = ?', [codeId]);
-    print(list);
-    return list.first;
+    if(list.isNotEmpty) {
+      return list.first;
+    }
+    else{
+      return {};
+    }
   }
 
   // update - edit
@@ -150,6 +172,7 @@ class DatabaseHelper {
 
   //delete
   static Future<void> deleteQuery({required int code}) async {
+    await _db!.rawDelete('DELETE FROM Incoming WHERE codeId = ?', [code]);
     int count =
         await _db!.rawDelete('DELETE FROM Stock WHERE code = ?', [code]);
     if (count == 1) {
@@ -174,4 +197,10 @@ class DatabaseHelper {
     await insertIntoIncoming(codeId: codeId , quantity: quantity);
   }
 
+  static Future<void> updateAndInsertNewDismissedValue({required Stock stock ,required int dismissedQuantity}) async{
+    stock.quantity = stock.quantity! - dismissedQuantity;
+    await updateData(stock: stock);
+
+    await insertIntoDismissed(codeId: stock.code,quantity : stock.quantity!);
+  }
 }

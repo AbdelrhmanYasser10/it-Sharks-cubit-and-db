@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled6/cubits/app_cubit/app_cubit.dart';
+import 'package:untitled6/cubits/delete_cubit/delete_cubit.dart';
+import 'package:untitled6/cubits/dismissed_cubit/dismissed_cubit.dart';
 import 'package:untitled6/cubits/incoming_cubit/incoming_cubit.dart';
 import 'package:untitled6/database/db_helper.dart';
 import 'package:untitled6/screens/home_screen.dart';
@@ -22,6 +24,8 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_)=>AppCubit()..getAllData()),
         BlocProvider(create: (_)=>IncomingCubit()),
+        BlocProvider(create: (_)=>DeleteCubit()),
+        BlocProvider(create: (_)=>DismissedCubit()),
       ],
       child: MaterialApp(
         title: 'Material App',
